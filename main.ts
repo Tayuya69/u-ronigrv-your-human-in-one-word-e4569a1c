@@ -39,3 +39,12 @@ if ([...back].length < 1 || [...back].length > 30) {
   throw new Error("read-back length out of range");
 }
 console.log(`Wrote ${outPath}: "${back}" (${[...back].length} characters)`);
+
+// Second-pass verification: read the entry back as raw bytes and
+// require an exact byte-for-byte match against the word constant.
+const rereadBytes = readFileSync(outPath);
+const expectedBytes = Buffer.from(WORD, "utf8");
+if (!rereadBytes.equals(expectedBytes)) {
+  throw new Error("Read-back mismatch: entry bytes differ from WORD");
+}
+console.log(`Verified ${rereadBytes.length} bytes read back from entry.txt`);
